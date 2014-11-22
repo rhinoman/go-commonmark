@@ -1,4 +1,4 @@
-//Package commonmark provides a Go wrapper for CommonMark C Library
+//Package commonmark provides a Go wrapper for the CommonMark C Library
 package commonmark
 
 /*
