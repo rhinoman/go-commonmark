@@ -5,6 +5,7 @@ package commonmark
 import "C"
 import "strings"
 
+//Converts Markdo--, er, CommonMark text to Html
 func Md2Html(mdtext string) string {
 	//cmark will barf if the input string doesn't end with a newline
 	if !strings.HasSuffix(mdtext, "\n") {
