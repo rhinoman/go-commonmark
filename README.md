@@ -13,7 +13,7 @@ Installation
 
 1.) First, install CommonMark located at: https://github.com/jgm/CommonMark
 
-2.) Make sure the library containg libcmark is in your LD_LIBRARY_PATH
+2.) Make sure the directory containg libcmark (e.g., /usr/local/lib) is in your LD_LIBRARY_PATH
 
 3.) Then, just:
 
