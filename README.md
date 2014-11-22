@@ -32,7 +32,7 @@ Example Usage
 
 ```go
 
-import commonmark
+import "github.com/rhinoman/go-commonmark"
 
 ...
 
