@@ -28,12 +28,9 @@ func Md2Html(mdtext string) string {
 	return C.GoString(htmlString)
 }
 
+//Wraps the cmark_doc_parser
 type CMarkParser struct {
 	parser *C.struct_cmark_doc_parser
-}
-
-type CMarkDocument struct {
-	document *C.struct_cmark_node
 }
 
 // Retruns a new CMark Parser.
@@ -55,9 +52,9 @@ func (cmp *CMarkParser) ProcessLine(line string) {
 
 // Finish parsing and generate a document
 // You must call Free() on the document when you're done with it!
-func (cmp *CMarkParser) Finish() *CMarkDocument {
-	return &CMarkDocument{
-		document: C.cmark_finish(cmp.parser),
+func (cmp *CMarkParser) Finish() *CMarkNode {
+	return &CMarkNode{
+		node: C.cmark_finish(cmp.parser),
 	}
 }
 
@@ -68,33 +65,14 @@ func (cmp *CMarkParser) Free() {
 }
 
 // Generates a document directly from a string
-func ParseDocument(buffer string) *CMarkDocument {
+func ParseDocument(buffer string) *CMarkNode {
 	if !strings.HasSuffix(buffer, "\n") {
 		buffer += "\n"
 	}
 	Cstr := C.CString(buffer)
 	Clen := C.size_t(len(buffer))
 	defer C.free(unsafe.Pointer(Cstr))
-	return &CMarkDocument{
-		document: C.cmark_parse_document(Cstr, Clen),
+	return &CMarkNode{
+		node: C.cmark_parse_document(Cstr, Clen),
 	}
-}
-
-// Debug print
-func (doc *CMarkDocument) DebugPrint() {
-	C.cmark_debug_print(doc.document)
-}
-
-// Renders the document as HTML.
-// Retunrs an HTML string.
-func (doc *CMarkDocument) RenderHtml() string {
-	result := C.cmark_render_html(doc.document)
-	defer C.free(unsafe.Pointer(result))
-	return C.GoString(result)
-}
-
-// Cleanup the document
-// Once you call Free on this, you can't use it anymore
-func (doc *CMarkDocument) Free() {
-	C.cmark_free_nodes(doc.document)
 }
