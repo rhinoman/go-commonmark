@@ -23,6 +23,10 @@ Installation
 go get github.com/rhinoman/go-commonmark
 ```
 
+Note:  The C API is stil considered 'pre-release' and is under fairly heavy development.  Thus, changes that break this wrapper can happen from time to time, and I'll be playing catch-up when that happens.  Once a release of CommonMark C API is made, this wrapper should be pegged to a specific release/tag.
+
+For now, this wrapper does indeed work with CommonMark master/6291b23400 
+
 Documentation
 -------------
 
@@ -31,6 +35,7 @@ See the Godoc: http://godoc.org/github.com/rhinoman/go-commonmark
 
 Example Usage
 -------------
+If all you need is to convert CommonMark text to Html, just do this:
 
 ```go
 
