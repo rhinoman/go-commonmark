@@ -7,8 +7,10 @@ package commonmark
 #include "cmark.h"
 */
 import "C"
-import "strings"
-import "unsafe"
+import (
+	"strings"
+	"unsafe"
+)
 
 // Converts Markdo--, er, CommonMark text to Html.
 // Parameter mdtext contains CommonMark text.
@@ -46,7 +48,9 @@ func NewCmarkDocParser() *CMarkParser {
 // Process a line
 func (cmp *CMarkParser) ProcessLine(line string) {
 	s := len(line)
-	C.process_line(cmp.parser, C.CString(line), C.size_t(s))
+	cLine := C.CString(line)
+	defer C.free(unsafe.Pointer(cLine))
+	C.process_line(cmp.parser, cLine, C.size_t(s))
 }
 
 // Finish parsing and generate a document

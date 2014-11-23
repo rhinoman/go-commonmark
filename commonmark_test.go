@@ -35,6 +35,7 @@ func TestCMarkParser(t *testing.T) {
 
 	document2 := commonmark.ParseDocument("Foobar\n------")
 	htmlText = document2.RenderHtml()
+	document2.DebugPrint()
 	if htmlText != "<h2>Foobar</h2>\n" {
 		t.Error("Html text 2 is not as expected :(")
 	}
