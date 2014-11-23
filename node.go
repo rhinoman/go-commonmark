@@ -11,6 +11,7 @@ import "unsafe"
 type NodeType int
 
 const (
+	//Block
 	CMARK_NODE_DOCUMENT NodeType = iota
 	CMARK_NODE_BLOCK_QUOTE
 	CMARK_NODE_LIST
@@ -21,8 +22,7 @@ const (
 	CMARK_NODE_HEADER
 	CMARK_NODE_HRULE
 	CMARK_NODE_REFERENCE_DEF
-
-	// Inline
+	//Inline
 	CMARK_NODE_STRING
 	CMARK_NODE_SOFTBREAK
 	CMARK_NODE_LINEBREAK
@@ -32,12 +32,31 @@ const (
 	CMARK_NODE_STRONG
 	CMARK_NODE_LINK
 	CMARK_NODE_IMAGE
-
+	//Block
 	CMARK_NODE_FIRST_BLOCK = CMARK_NODE_DOCUMENT
-	CMARK_NODE_LAST_BLOCK = CMARK_NODE_REFERENCE_DEF
+	CMARK_NODE_LAST_BLOCK  = CMARK_NODE_REFERENCE_DEF
+	//Inline
 	CMARK_NODE_FIRST_INLINE = CMARK_NODE_STRING
-	CMARK_NODE_LAST_INLINE = CMARK_NODE_IMAGE
+	CMARK_NODE_LAST_INLINE  = CMARK_NODE_IMAGE
 )
+
+//Maps to a cmark_list_type in cmark.h
+type ListType int
+
+const (
+	CMARK_NO_LIST ListType = iota
+	CMARK_BULLET_LIST
+	CMARK_ORDERED_LIST
+)
+
+//converts C int return codes to True/False :)
+func success(code C.int) bool {
+	if int(code) > 0 {
+		return true
+	} else {
+		return false
+	}
+}
 
 //Wraps the cmark_node.
 //CommonMark nodes are represented as Trees in memory.
@@ -127,13 +146,11 @@ func (node *CMarkNode) GetStringContent() string {
 }
 
 //Set the node's string content
-func (node *CMarkNode) SetStringContent(content string) {
+func (node *CMarkNode) SetStringContent(content string) bool {
 	cstr := C.CString(content)
 	defer C.free(unsafe.Pointer(cstr))
-	C.cmark_node_set_string_content(node.node, cstr)
+	return success(C.cmark_node_set_string_content(node.node, cstr))
 }
-
-//Header node funcs
 
 //Get a Header node's level
 func (node *CMarkNode) GetHeaderLevel() int {
@@ -142,8 +159,83 @@ func (node *CMarkNode) GetHeaderLevel() int {
 }
 
 //Set a Header node's level (1,2, etc.)
-func (node *CMarkNode) SetHeaderLevel(level int) {
-	C.cmark_node_set_header_level(node.node, C.int(level))
+func (node *CMarkNode) SetHeaderLevel(level int) bool {
+	return success(C.cmark_node_set_header_level(node.node, C.int(level)))
+}
+
+//Get a List node's list type
+func (node *CMarkNode) GetListType() ListType {
+	lt := C.cmark_node_get_list_type(node.node)
+	return ListType(lt)
+}
+
+//Set a List node's list type
+func (node *CMarkNode) SetListType(lt ListType) bool {
+	return success(C.cmark_node_set_list_type(node.node, C.cmark_list_type(lt)))
+}
+
+//Get a list's start
+func (node *CMarkNode) GetListStart() int {
+	ls := C.cmark_node_get_list_start(node.node)
+	return int(ls)
+}
+
+//Set a list's start
+func (node *CMarkNode) SetListStart(start int) bool {
+	return success(C.cmark_node_set_list_start(node.node, C.int(start)))
+}
+
+//Get list 'tight'
+func (node *CMarkNode) GetListTight() bool {
+	return success(C.cmark_node_get_list_tight(node.node))
+}
+
+//Set list 'tight'
+func (node *CMarkNode) SetListTight(isTight bool) bool {
+	ti := 0
+	if isTight == true {
+		ti = 1
+	}
+	return success(C.cmark_node_set_list_tight(node.node, C.int(ti)))
+}
+
+//Get Fence info
+func (node *CMarkNode) GetFenceInfo() string {
+	cstr := C.cmark_node_get_fence_info(node.node)
+	return C.GoString(cstr)
+}
+
+//Set Fence info
+func (node *CMarkNode) SetFenceInfo(fenceInfo string) bool {
+	cstr := C.CString(fenceInfo)
+	defer C.free(unsafe.Pointer(cstr))
+	return success(C.cmark_node_set_fence_info(node.node, cstr))
+}
+
+//Get a node's url
+func (node *CMarkNode) GetUrl() string {
+	cstr := C.cmark_node_get_url(node.node)
+	return C.GoString(cstr)
+}
+
+//Set a node's url
+func (node *CMarkNode) SetUrl(url string) bool {
+	cstr := C.CString(url)
+	defer C.free(unsafe.Pointer(cstr))
+	return success(C.cmark_node_set_url(node.node, cstr))
+}
+
+//Set a node's title
+func (node *CMarkNode) SetTitle(title string) bool {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+	return success(C.cmark_node_set_title(node.node, cstr))
+}
+
+//Get a node's title
+func (node *CMarkNode) GetTitle() string {
+	cstr := C.cmark_node_get_title(node.node)
+	return C.GoString(cstr)
 }
 
 // Tree manipulation functions
@@ -156,23 +248,23 @@ func (node *CMarkNode) Unlink() {
 // InsertBefore can cause a panic quite readily :)
 // Hint: Both nodes had better already be in the 'tree'
 // Insert a node before another 'sibling' node
-func (node *CMarkNode) InsertBefore(sibling *CMarkNode) {
-	C.cmark_node_insert_before(node.node, sibling.node)
+func (node *CMarkNode) InsertBefore(sibling *CMarkNode) bool {
+	return success(C.cmark_node_insert_before(node.node, sibling.node))
 }
 
 // InsertAfter can cause a panic quite readily :)
 // Hint: Both nodes had better already be in the 'tree'
 //Insert a node after another 'sibling' node
-func (node *CMarkNode) InsertAfter(sibling *CMarkNode) {
-	C.cmark_node_insert_after(node.node, sibling.node)
+func (node *CMarkNode) InsertAfter(sibling *CMarkNode) bool {
+	return success(C.cmark_node_insert_after(node.node, sibling.node))
 }
 
 //Prepend a child node
-func (node *CMarkNode) PrependChild(child *CMarkNode) {
-	C.cmark_node_prepend_child(node.node, child.node)
+func (node *CMarkNode) PrependChild(child *CMarkNode) bool {
+	return success(C.cmark_node_prepend_child(node.node, child.node))
 }
 
 //Append a child node
-func (node *CMarkNode) AppendChild(child *CMarkNode) {
-	C.cmark_node_append_child(node.node, child.node)
+func (node *CMarkNode) AppendChild(child *CMarkNode) bool {
+	return success(C.cmark_node_append_child(node.node, child.node))
 }
