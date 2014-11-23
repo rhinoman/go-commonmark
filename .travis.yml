@@ -12,5 +12,6 @@ before_install:
  - cd ~/cm
  - make 
  - sudo make install
+ - cd $HOME/gopath/src/github.com/rhinoman/go-commonmark
 script:
  - go test -v ./...
