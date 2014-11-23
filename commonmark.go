@@ -44,9 +44,9 @@ func NewCmarkDocParser() *CMarkParser {
 }
 
 // Process a line
-func (cmp *CMarkParser) ProcessLine(buffer string) {
-	s := len(buffer)
-	C.process_line(cmp.parser, C.CString(buffer), C.size_t(s))
+func (cmp *CMarkParser) ProcessLine(line string) {
+	s := len(line)
+	C.process_line(cmp.parser, C.CString(line), C.size_t(s))
 }
 
 // Finish parsing and generate a document
@@ -61,6 +61,24 @@ func (cmp *CMarkParser) Finish() *CMarkDocument {
 // Once you call Free on this, you can't use it anymore
 func (cmp *CMarkParser) Free() {
 	C.cmark_free_doc_parser(cmp.parser)
+}
+
+// Generates a document directly from a string
+func ParseDocument(buffer string) *CMarkDocument {
+	if !strings.HasSuffix(buffer, "\n") {
+		buffer += "\n"
+	}
+	Cstr := C.CString(buffer)
+	Clen := C.size_t(len(buffer))
+	defer C.free(unsafe.Pointer(Cstr))
+	return &CMarkDocument{
+		document: C.cmark_parse_document(Cstr, Clen),
+	}
+}
+
+// Debug print
+func (doc *CMarkDocument) DebugPrint() {
+	C.cmark_debug_print(doc.document)
 }
 
 // Renders the document as HTML.
