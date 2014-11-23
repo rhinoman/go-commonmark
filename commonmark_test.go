@@ -51,8 +51,8 @@ func TestCMarkNodeOps(t *testing.T) {
 	if root.GetNodeType() != commonmark.CMARK_NODE_DOCUMENT {
 		t.Error("Root is wrong type!")
 	}
-	header1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_SETEXT_HEADER)
-	if header1.GetNodeType() != commonmark.CMARK_NODE_SETEXT_HEADER {
+	header1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_HEADER)
+	if header1.GetNodeType() != commonmark.CMARK_NODE_HEADER {
 		t.Error("header1 is wrong type!")
 	}
 	header1.SetHeaderLevel(1)
@@ -62,7 +62,7 @@ func TestCMarkNodeOps(t *testing.T) {
 		t.Error("header1str content is wrong!")
 	}
 	header1.AppendChild(header1str)
-	header2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_SETEXT_HEADER)
+	header2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_HEADER)
 	header2str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_STRING)
 	header2str.SetStringContent("Another header!")
 	header2.AppendChild(header2str)
