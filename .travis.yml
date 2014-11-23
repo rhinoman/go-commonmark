@@ -2,9 +2,18 @@
 language: go
 go:
  - 1.3
-before_script:
+before_install:
+ - sudo apt-get update
+ - sudo apt-get install gcc
+ - sudo apt-get install build-essential
+ - sudo apt-get install cmake
+ - sudo apt-get install re2c
  - git clone https://github.com/jgm/CommonMark ~/cm
  - cd ~/cm
- - make & make install
+ - make 
+ - sudo make install
+ - LD_LIBRARY_PATH=/usr/local/lib
+ - export LD_LIBRARY_PATH
+ - cd $HOME/gopath/src/github.com/rhinoman/go-commonmark
 script:
  - go test -v ./...
