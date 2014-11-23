@@ -1,3 +1,4 @@
+# Travis build settings for go-commonmark
 language: go
 go:
  - 1.3
