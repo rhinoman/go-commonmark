@@ -64,6 +64,7 @@ type CMarkNode struct {
 	node *C.struct_cmark_node
 }
 
+//Creates a new node of the specified type
 func NewCMarkNode(nt NodeType) *CMarkNode {
 	return &CMarkNode{
 		node: C.cmark_node_new(C.cmark_node_type(nt)),
