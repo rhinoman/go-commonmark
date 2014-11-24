@@ -77,7 +77,7 @@ func (node *CMarkNode) DebugPrint() {
 }
 
 // Renders the document as HTML.
-// Retunrs an HTML string.
+// Returns an HTML string.
 func (node *CMarkNode) RenderHtml() string {
 	result := C.cmark_render_html(node.node)
 	defer C.free(unsafe.Pointer(result))
