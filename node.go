@@ -71,9 +71,11 @@ func NewCMarkNode(nt NodeType) *CMarkNode {
 	}
 }
 
-// Debug print
-func (node *CMarkNode) DebugPrint() {
-	C.cmark_debug_print(node.node)
+// Pretty print AST structure
+func (node *CMarkNode) RenderAst() string {
+	result := C.cmark_render_ast(node.node)
+	defer C.free(unsafe.Pointer(result))
+	return C.GoString(result)
 }
 
 // Renders the document as HTML.
