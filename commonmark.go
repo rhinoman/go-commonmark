@@ -8,6 +8,7 @@ package commonmark
 */
 import "C"
 import (
+	"runtime"
 	"strings"
 	"unsafe"
 )
@@ -37,9 +38,11 @@ type CMarkParser struct {
 // You must call Free() on this thing when you're done with it!
 // Please.
 func NewCmarkDocParser() *CMarkParser {
-	return &CMarkParser{
+	p := &CMarkParser{
 		parser: C.cmark_new_doc_parser(),
 	}
+	runtime.SetFinalizer(p, (*CMarkParser).Free)
+	return p
 }
 
 // Process a line
@@ -61,7 +64,10 @@ func (cmp *CMarkParser) Finish() *CMarkNode {
 // Cleanup the parser
 // Once you call Free on this, you can't use it anymore
 func (cmp *CMarkParser) Free() {
-	C.cmark_free_doc_parser(cmp.parser)
+	if cmp.parser != nil {
+		C.cmark_free_doc_parser(cmp.parser)
+	}
+	cmp.parser = nil
 }
 
 // Generates a document directly from a string

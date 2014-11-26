@@ -24,6 +24,8 @@ func TestCMarkParser(t *testing.T) {
 	if document == nil {
 		t.Error("Document is nil!")
 	}
+	//Call it twice to make sure it doesn't crash :)
+	parser.Free()
 	parser.Free()
 	htmlText := document.RenderHtml()
 	if htmlText != "<h1>Boo</h1>\n" {
@@ -40,6 +42,7 @@ func TestCMarkParser(t *testing.T) {
 		t.Error("Html text 2 is not as expected :(")
 	}
 	t.Logf("Html Text2: %v", htmlText)
+	document2.Free()
 	document2.Free()
 }
 

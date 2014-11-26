@@ -5,7 +5,10 @@ package commonmark
 #include "cmark.h"
 */
 import "C"
-import "unsafe"
+import (
+	"runtime"
+	"unsafe"
+)
 
 //Maps to a cmark_node_type enum in cmark.h
 type NodeType int
@@ -66,9 +69,11 @@ type CMarkNode struct {
 
 //Creates a new node of the specified type
 func NewCMarkNode(nt NodeType) *CMarkNode {
-	return &CMarkNode{
+	n := &CMarkNode{
 		node: C.cmark_node_new(C.cmark_node_type(nt)),
 	}
+	runtime.SetFinalizer(n, (*CMarkNode).Free)
+	return n
 }
 
 // Pretty print AST structure
@@ -94,7 +99,10 @@ func (node *CMarkNode) Destroy() {
 // Cleanup the Nodelist, including any children
 // Once you call Free on this, you can't use it anymore
 func (node *CMarkNode) Free() {
-	C.cmark_free_nodes(node.node)
+	if node.node != nil {
+		C.cmark_free_nodes(node.node)
+	}
+	node.node = nil
 }
 
 //Node traversal functions
