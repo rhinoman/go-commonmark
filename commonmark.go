@@ -50,7 +50,7 @@ func (cmp *CMarkParser) ProcessLine(line string) {
 	s := len(line)
 	cLine := C.CString(line)
 	defer C.free(unsafe.Pointer(cLine))
-	C.process_line(cmp.parser, cLine, C.size_t(s))
+	C.cmark_process_line(cmp.parser, cLine, C.size_t(s))
 }
 
 // Finish parsing and generate a document
