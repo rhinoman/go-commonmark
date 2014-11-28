@@ -91,16 +91,11 @@ func (node *CMarkNode) RenderHtml() string {
 	return C.GoString(result)
 }
 
-// Unlink a node from the tree and free it.
-func (node *CMarkNode) Destroy() {
-	C.cmark_node_destroy(node.node)
-}
-
-// Cleanup the Nodelist, including any children
-// Once you call Free on this, you can't use it anymore
+// Cleanup a node, including any children.
+// Unlinks a node from the tree and frees it.
 func (node *CMarkNode) Free() {
 	if node.node != nil {
-		C.cmark_free_nodes(node.node)
+		C.cmark_node_destroy(node.node)
 	}
 	node.node = nil
 }
