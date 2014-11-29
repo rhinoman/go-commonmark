@@ -95,7 +95,7 @@ func (node *CMarkNode) RenderHtml() string {
 // Unlinks a node from the tree and frees it.
 func (node *CMarkNode) Free() {
 	if node.node != nil {
-		C.cmark_node_destroy(node.node)
+		C.cmark_node_free(node.node)
 	}
 	node.node = nil
 }

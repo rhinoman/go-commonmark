@@ -31,7 +31,7 @@ func Md2Html(mdtext string) string {
 
 //Wraps the cmark_doc_parser
 type CMarkParser struct {
-	parser *C.struct_cmark_doc_parser
+	parser *C.struct_cmark_parser
 }
 
 // Retruns a new CMark Parser.
@@ -39,7 +39,7 @@ type CMarkParser struct {
 // Please.
 func NewCmarkDocParser() *CMarkParser {
 	p := &CMarkParser{
-		parser: C.cmark_new_doc_parser(),
+		parser: C.cmark_parser_new(),
 	}
 	runtime.SetFinalizer(p, (*CMarkParser).Free)
 	return p
@@ -50,14 +50,14 @@ func (cmp *CMarkParser) ProcessLine(line string) {
 	s := len(line)
 	cLine := C.CString(line)
 	defer C.free(unsafe.Pointer(cLine))
-	C.cmark_process_line(cmp.parser, cLine, C.size_t(s))
+	C.cmark_parser_process_line(cmp.parser, cLine, C.size_t(s))
 }
 
 // Finish parsing and generate a document
 // You must call Free() on the document when you're done with it!
 func (cmp *CMarkParser) Finish() *CMarkNode {
 	return &CMarkNode{
-		node: C.cmark_finish(cmp.parser),
+		node: C.cmark_parser_finish(cmp.parser),
 	}
 }
 
@@ -65,7 +65,7 @@ func (cmp *CMarkParser) Finish() *CMarkNode {
 // Once you call Free on this, you can't use it anymore
 func (cmp *CMarkParser) Free() {
 	if cmp.parser != nil {
-		C.cmark_free_doc_parser(cmp.parser)
+		C.cmark_parser_free(cmp.parser)
 	}
 	cmp.parser = nil
 }
