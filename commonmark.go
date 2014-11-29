@@ -3,11 +3,13 @@ package commonmark
 
 /*
 #cgo LDFLAGS: -lcmark
+#include <stdio.h>
 #include <stdlib.h>
 #include "cmark.h"
 */
 import "C"
 import (
+	"errors"
 	"runtime"
 	"strings"
 	"unsafe"
@@ -37,7 +39,7 @@ type CMarkParser struct {
 // Retruns a new CMark Parser.
 // You must call Free() on this thing when you're done with it!
 // Please.
-func NewCmarkDocParser() *CMarkParser {
+func NewCmarkParser() *CMarkParser {
 	p := &CMarkParser{
 		parser: C.cmark_parser_new(),
 	}
@@ -56,9 +58,11 @@ func (cmp *CMarkParser) ProcessLine(line string) {
 // Finish parsing and generate a document
 // You must call Free() on the document when you're done with it!
 func (cmp *CMarkParser) Finish() *CMarkNode {
-	return &CMarkNode{
+	n := &CMarkNode{
 		node: C.cmark_parser_finish(cmp.parser),
 	}
+	runtime.SetFinalizer(n, (*CMarkNode).Free)
+	return n
 }
 
 // Cleanup the parser
@@ -81,4 +85,22 @@ func ParseDocument(buffer string) *CMarkNode {
 	return &CMarkNode{
 		node: C.cmark_parse_document(Cstr, Clen),
 	}
+}
+
+// Parses a file and returns a CMarkNode
+func ParseFile(filename string) (*CMarkNode, error) {
+	fname := C.CString(filename)
+	access := C.CString("r")
+	defer C.free(unsafe.Pointer(fname))
+	defer C.free(unsafe.Pointer(access))
+	file := C.fopen(fname, access)
+	if file == nil {
+		return nil, errors.New("Unable to open file with name: " + filename)
+	}
+	defer C.fclose(file)
+	n := &CMarkNode{
+		node: C.cmark_parse_file(file),
+	}
+	runtime.SetFinalizer(n, (*CMarkNode).Free)
+	return n, nil
 }
