@@ -47,7 +47,7 @@ func NewCmarkParser() *CMarkParser {
 	return p
 }
 
-// Process a line
+// Process some text
 func (cmp *CMarkParser) Push(text string) {
 	s := len(text)
 	cstr := C.CString(text)
