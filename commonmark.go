@@ -48,11 +48,11 @@ func NewCmarkParser() *CMarkParser {
 }
 
 // Process a line
-func (cmp *CMarkParser) ProcessLine(line string) {
+func (cmp *CMarkParser) Push(line string) {
 	s := len(line)
 	cLine := C.CString(line)
 	defer C.free(unsafe.Pointer(cLine))
-	C.cmark_parser_process_line(cmp.parser, cLine, C.size_t(s))
+	C.cmark_parser_push(cmp.parser, cLine, C.size_t(s))
 }
 
 // Finish parsing and generate a document
@@ -88,6 +88,7 @@ func ParseDocument(buffer string) *CMarkNode {
 }
 
 // Parses a file and returns a CMarkNode
+// Returns an error if the file can't be opened
 func ParseFile(filename string) (*CMarkNode, error) {
 	fname := C.CString(filename)
 	access := C.CString("r")

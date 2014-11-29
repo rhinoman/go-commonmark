@@ -18,8 +18,8 @@ func TestCMarkParser(t *testing.T) {
 	if parser == nil {
 		t.Error("Parser is nil!")
 	}
-	parser.ProcessLine("Boo\n")
-	parser.ProcessLine("===\n")
+	parser.Push("Boo\n")
+	parser.Push("===\n")
 	document := parser.Finish()
 	if document == nil {
 		t.Error("Document is nil!")
