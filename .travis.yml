@@ -8,6 +8,7 @@ before_install:
  - sudo apt-get install build-essential
  - sudo apt-get install cmake
  - sudo apt-get install re2c
+ - sudo apt-get install doxygen
  - git clone https://github.com/jgm/CommonMark ~/cm
  - cd ~/cm
  - make 
