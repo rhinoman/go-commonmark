@@ -48,11 +48,11 @@ func NewCmarkParser() *CMarkParser {
 }
 
 // Process some text
-func (cmp *CMarkParser) Push(text string) {
+func (cmp *CMarkParser) Feed(text string) {
 	s := len(text)
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
-	C.cmark_parser_push(cmp.parser, cstr, C.size_t(s))
+	C.cmark_parser_feed(cmp.parser, cstr, C.size_t(s))
 }
 
 // Finish parsing and generate a document
