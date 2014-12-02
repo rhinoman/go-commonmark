@@ -82,9 +82,11 @@ func ParseDocument(buffer string) *CMarkNode {
 	Cstr := C.CString(buffer)
 	Clen := C.size_t(len(buffer))
 	defer C.free(unsafe.Pointer(Cstr))
-	return &CMarkNode{
+	n := &CMarkNode{
 		node: C.cmark_parse_document(Cstr, Clen),
 	}
+	runtime.SetFinalizer(n, (*CMarkNode).Free)
+	return n
 }
 
 // Parses a file and returns a CMarkNode
