@@ -87,14 +87,14 @@ func TestCMarkNodeOps(t *testing.T) {
 	if header1.SetStringContent("boo") != false {
 		t.Error("SetStringContent should return false for header node")
 	}
-	header1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_STRING)
+	header1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
 	header1str.SetStringContent("I'm the main header!")
 	if header1str.GetStringContent() != "I'm the main header!" {
 		t.Error("header1str content is wrong!")
 	}
 	header1.AppendChild(header1str)
 	header2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_HEADER)
-	header2str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_STRING)
+	header2str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
 	if header2str.SetStringContent("Another header!") == false {
 		t.Error("SetStringContent returned false for valid input")
 	}
@@ -136,7 +136,7 @@ func TestCMarkLists(t *testing.T) {
 	listItem1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
 	listItem2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
 	li1para := commonmark.NewCMarkNode(commonmark.CMARK_NODE_PARAGRAPH)
-	li1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_STRING)
+	li1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
 	li1str.SetStringContent("List Item 1")
 	li1para.AppendChild(li1str)
 	if listItem1.AppendChild(li1para) == false {
