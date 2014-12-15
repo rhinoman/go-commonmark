@@ -149,16 +149,16 @@ func (node *CMarkNode) GetNodeType() NodeType {
 }
 
 //Get the node's string content
-func (node *CMarkNode) GetStringContent() string {
-	cstr := C.cmark_node_get_string_content(node.node)
+func (node *CMarkNode) GetLiteral() string {
+	cstr := C.cmark_node_get_literal(node.node)
 	return C.GoString(cstr)
 }
 
 //Set the node's string content
-func (node *CMarkNode) SetStringContent(content string) bool {
+func (node *CMarkNode) SetLiteral(content string) bool {
 	cstr := C.CString(content)
 	defer C.free(unsafe.Pointer(cstr))
-	return success(C.cmark_node_set_string_content(node.node, cstr))
+	return success(C.cmark_node_set_literal(node.node, cstr))
 }
 
 //Get a Header node's level
