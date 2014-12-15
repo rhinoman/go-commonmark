@@ -94,6 +94,14 @@ func (node *CMarkNode) RenderHtml() string {
 	return C.GoString(result)
 }
 
+// Renders the document as a groff man page,
+// without the header
+func (node *CMarkNode) RenderMan() string {
+	result := C.cmark_render_man(node.node)
+	defer C.free(unsafe.Pointer(result))
+	return C.GoString(result)
+}
+
 // Cleanup a node, including any children.
 // Unlinks a node from the tree and frees it.
 func (node *CMarkNode) Free() {

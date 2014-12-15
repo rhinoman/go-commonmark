@@ -125,6 +125,8 @@ func TestCMarkNodeOps(t *testing.T) {
 	if htmlStr != "<h1>I'm the main header!</h1>\n" {
 		t.Error("htmlStr is wrong!")
 	}
+	manStr := root.RenderMan()
+	t.Logf("\nMAN: %v", manStr)
 	header2.Free()
 	root.Free()
 }
