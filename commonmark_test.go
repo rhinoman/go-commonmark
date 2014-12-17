@@ -176,7 +176,7 @@ func TestCMarkCodeBlocks(t *testing.T) {
 	t.Logf("\nAST: %v", root.RenderAst())
 	htmlString := root.RenderHtml()
 	t.Logf("\nHtml String: %v\n", htmlString)
-	if htmlString != "<pre><code class=\"language-c\">int main(){\n return 0;\n }</code></pre>\n" {
+	if htmlString != "<pre><code>int main(){\n return 0;\n }</code></pre>\n" {
 		t.Error("htmlString isn't right!")
 	}
 	root.Free()
