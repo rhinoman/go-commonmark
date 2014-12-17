@@ -204,3 +204,38 @@ func TestCMarkUrls(t *testing.T) {
 	}
 	root.Free()
 }
+
+func TestCMarkIter(t *testing.T) {
+	root := commonmark.NewCMarkNode(commonmark.CMARK_NODE_DOCUMENT)
+	list := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST)
+	list.SetListType(commonmark.CMARK_ORDERED_LIST)
+	listItem1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
+	listItem2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
+	li1para := commonmark.NewCMarkNode(commonmark.CMARK_NODE_PARAGRAPH)
+	li1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
+	li1str.SetLiteral("List Item 1")
+	li1para.AppendChild(li1str)
+	if listItem1.AppendChild(li1para) == false {
+		t.Error("Couldn't append paragraph to list item")
+	}
+	list.AppendChild(listItem1)
+	list.AppendChild(listItem2)
+	list.SetListTight(true)
+	root.AppendChild(list)
+	t.Logf("\nAST: %v", root.RenderAst())
+	iter := commonmark.NewCMarkIter(root)
+	for {
+		ne := iter.Next()
+		t.Logf("NodeEvent: %v", ne)
+		iNode := iter.GetNode()
+		if iNode == nil {
+			t.Error("iter node was nil!")
+		}
+		if ne == 0 {
+			break
+		}
+
+	}
+	iter.Free()
+	root.Free()
+}
