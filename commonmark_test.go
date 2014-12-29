@@ -32,12 +32,12 @@ func TestCMarkParser(t *testing.T) {
 		t.Error("Html text is not as expected :(")
 	}
 	t.Logf("Html Text: %v", htmlText)
-	document.RenderAst()
+	document.RenderXML()
 	document.Free()
 
 	document2 := commonmark.ParseDocument("Foobar\n------")
 	htmlText = document2.RenderHtml()
-	document2.RenderAst()
+	document2.RenderXML()
 	if htmlText != "<h2>Foobar</h2>\n" {
 		t.Error("Html text 2 is not as expected :(")
 	}
@@ -107,7 +107,7 @@ func TestCMarkNodeOps(t *testing.T) {
 		t.Error("Couldn't prepend header to root")
 	}
 	root.AppendChild(header2)
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	htmlStr := root.RenderHtml()
 	if htmlStr != "<h1>I'm the main header!</h1>\n<h2>Another header!</h2>\n" {
 		t.Error("htmlStr is wrong!")
@@ -115,7 +115,7 @@ func TestCMarkNodeOps(t *testing.T) {
 	t.Logf("Html Text: %v", htmlStr)
 	//Rearrange...
 	header1.InsertBefore(header2)
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	htmlStr = root.RenderHtml()
 	if htmlStr != "<h2>Another header!</h2>\n<h1>I'm the main header!</h1>\n" {
 		t.Error("htmlStr is wrong!")
@@ -123,7 +123,7 @@ func TestCMarkNodeOps(t *testing.T) {
 	t.Logf("Html Text: %v", htmlStr)
 	//removing something
 	header2.Unlink()
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	htmlStr = root.RenderHtml()
 	if htmlStr != "<h1>I'm the main header!</h1>\n" {
 		t.Error("htmlStr is wrong!")
@@ -151,7 +151,7 @@ func TestCMarkLists(t *testing.T) {
 	list.AppendChild(listItem2)
 	list.SetListTight(true)
 	root.AppendChild(list)
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	htmlString := root.RenderHtml()
 	if htmlString != "<ol>\n<li>List Item 1</li>\n<li></li>\n</ol>\n" {
 		t.Error("htmlString is wrong!")
@@ -176,7 +176,7 @@ func TestCMarkCodeBlocks(t *testing.T) {
 	if root.AppendChild(cb) == false {
 		t.Error("Couldn't append code block to document")
 	}
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	htmlString := root.RenderHtml()
 	t.Logf("\nHtml String: %v\n", htmlString)
 	if htmlString != "<pre><code>int main(){\n return 0;\n }</code></pre>\n" {
@@ -199,7 +199,7 @@ func TestCMarkUrls(t *testing.T) {
 	if link.GetUrl() != "http://duckduckgo.com" {
 		t.Error("Url doesn't match")
 	}
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	htmlString := root.RenderHtml()
 	t.Logf("\nHtml String: %v\n", htmlString)
 	if htmlString != "<p><a href=\"http://duckduckgo.com\"></a></p>\n" {
@@ -225,7 +225,7 @@ func TestCMarkIter(t *testing.T) {
 	list.AppendChild(listItem2)
 	list.SetListTight(true)
 	root.AppendChild(list)
-	t.Logf("\nAST: %v", root.RenderAst())
+	t.Logf("\nXML: %v", root.RenderXML())
 	iter := commonmark.NewCMarkIter(root)
 	for {
 		ne := iter.Next()

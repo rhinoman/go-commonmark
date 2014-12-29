@@ -79,9 +79,9 @@ func NewCMarkNode(nt NodeType) *CMarkNode {
 	return n
 }
 
-// Pretty print AST structure
-func (node *CMarkNode) RenderAst() string {
-	result := C.cmark_render_ast(node.node)
+// print structure as XML
+func (node *CMarkNode) RenderXML() string {
+	result := C.cmark_render_xml(node.node)
 	defer C.free(unsafe.Pointer(result))
 	return C.GoString(result)
 }
