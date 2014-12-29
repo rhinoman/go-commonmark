@@ -79,6 +79,9 @@ func TestCMarkNodeOps(t *testing.T) {
 	if root.GetNodeType() != commonmark.CMARK_NODE_DOCUMENT {
 		t.Error("Root is wrong type!")
 	}
+	if root.GetNodeTypeString() != "document" {
+		t.Error("Root is wrong type string!")
+	}
 	header1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_HEADER)
 	if header1.GetNodeType() != commonmark.CMARK_NODE_HEADER {
 		t.Error("header1 is wrong type!")
@@ -135,8 +138,8 @@ func TestCMarkLists(t *testing.T) {
 	root := commonmark.NewCMarkNode(commonmark.CMARK_NODE_DOCUMENT)
 	list := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST)
 	list.SetListType(commonmark.CMARK_ORDERED_LIST)
-	listItem1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
-	listItem2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
+	listItem1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_ITEM)
+	listItem2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_ITEM)
 	li1para := commonmark.NewCMarkNode(commonmark.CMARK_NODE_PARAGRAPH)
 	li1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
 	li1str.SetLiteral("List Item 1")
@@ -209,8 +212,8 @@ func TestCMarkIter(t *testing.T) {
 	root := commonmark.NewCMarkNode(commonmark.CMARK_NODE_DOCUMENT)
 	list := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST)
 	list.SetListType(commonmark.CMARK_ORDERED_LIST)
-	listItem1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
-	listItem2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_LIST_ITEM)
+	listItem1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_ITEM)
+	listItem2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_ITEM)
 	li1para := commonmark.NewCMarkNode(commonmark.CMARK_NODE_PARAGRAPH)
 	li1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
 	li1str.SetLiteral("List Item 1")

@@ -21,7 +21,7 @@ const (
 	CMARK_NODE_DOCUMENT
 	CMARK_NODE_BLOCK_QUOTE
 	CMARK_NODE_LIST
-	CMARK_NODE_LIST_ITEM
+	CMARK_NODE_ITEM
 	CMARK_NODE_CODE_BLOCK
 	CMARK_NODE_HTML
 	CMARK_NODE_PARAGRAPH
@@ -154,6 +154,12 @@ func (node *CMarkNode) LastChild() *CMarkNode {
 func (node *CMarkNode) GetNodeType() NodeType {
 	nt := C.cmark_node_get_type(node.node)
 	return NodeType(nt)
+}
+
+//Get the node type as a string
+func (node *CMarkNode) GetNodeTypeString() string {
+	cstr := C.cmark_node_get_type_string(node.node)
+	return C.GoString(cstr)
 }
 
 //Get the node's string content
