@@ -25,7 +25,7 @@ go get github.com/rhinoman/go-commonmark
 
 **Note:**  The C library is still considered 'pre-release' and is under fairly heavy development.  Thus, changes that break this wrapper can happen from time to time, and I'll be playing catch-up when that occurs.  Once a release of the CommonMark C library is made, this wrapper should be pegged to a specific release/tag.
 
-For now, this wrapper does indeed work with CommonMark master/95176e8184 :)
+For now, this wrapper does indeed work with CommonMark master/4a7d305d22 :)
 
 Documentation
 -------------
