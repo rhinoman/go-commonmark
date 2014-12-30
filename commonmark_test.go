@@ -108,6 +108,7 @@ func TestCMarkNodeOps(t *testing.T) {
 	}
 	root.AppendChild(header2)
 	t.Logf("\nXML: %v", root.RenderXML())
+
 	htmlStr := root.RenderHtml()
 	if htmlStr != "<h1>I'm the main header!</h1>\n<h2>Another header!</h2>\n" {
 		t.Error("htmlStr is wrong!")

@@ -55,6 +55,14 @@ const (
 	CMARK_ORDERED_LIST
 )
 
+type DelimType int
+
+const (
+	CMARK_NO_DELIM = iota
+	CMARK_PERIOD_DELIM
+	CMARK_PAREN_DELIM
+)
+
 //converts C int return codes to True/False :)
 func success(code C.int) bool {
 	if int(code) > 0 {
@@ -197,6 +205,17 @@ func (node *CMarkNode) SetListType(lt ListType) bool {
 	return success(C.cmark_node_set_list_type(node.node, C.cmark_list_type(lt)))
 }
 
+//Returns the list delimiter type of node, or CMARK_NO_DELIM if node is not a list
+func (node *CMarkNode) GetListDelim() DelimType {
+	dt := C.cmark_node_get_list_delim(node.node)
+	return DelimType(dt)
+}
+
+//Sets the list delimeter type of the node, returns true on success
+func (node *CMarkNode) SetListDelim(dt DelimType) bool {
+	return success(C.cmark_node_set_list_delim(node.node, C.cmark_delim_type(dt)))
+}
+
 //Get a list's start
 func (node *CMarkNode) GetListStart() int {
 	ls := C.cmark_node_get_list_start(node.node)
@@ -259,6 +278,26 @@ func (node *CMarkNode) SetTitle(title string) bool {
 func (node *CMarkNode) GetTitle() string {
 	cstr := C.cmark_node_get_title(node.node)
 	return C.GoString(cstr)
+}
+
+//Returns the line on which 'node' begins
+func (node *CMarkNode) GetStartLine() int {
+	return int(C.cmark_node_get_start_line(node.node))
+}
+
+//Returns the column at which 'node' begins
+func (node *CMarkNode) GetStartColumn() int {
+	return int(C.cmark_node_get_start_column(node.node))
+}
+
+//Returns the line on which 'node' ends
+func (node *CMarkNode) GetEndLine() int {
+	return int(C.cmark_node_get_end_line(node.node))
+}
+
+//Returns the column at which 'node' ends
+func (node *CMarkNode) GetEndColumn() int {
+	return int(C.cmark_node_get_end_column(node.node))
 }
 
 // Tree manipulation functions
