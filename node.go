@@ -63,6 +63,11 @@ const (
 	CMARK_PAREN_DELIM
 )
 
+//CMark writer options for render functions
+const CMARK_OPT_DEFAULT = 0
+const CMARK_OPT_SOURCEPOS = 1
+const CMARK_OPT_HARDBREAKS = 2
+
 //converts C int return codes to True/False :)
 func success(code C.int) bool {
 	if int(code) > 0 {
@@ -88,24 +93,24 @@ func NewCMarkNode(nt NodeType) *CMarkNode {
 }
 
 // print structure as XML
-func (node *CMarkNode) RenderXML() string {
-	result := C.cmark_render_xml(node.node)
+func (node *CMarkNode) RenderXML(options int) string {
+	result := C.cmark_render_xml(node.node, C.long(options))
 	defer C.free(unsafe.Pointer(result))
 	return C.GoString(result)
 }
 
 // Renders the document as HTML.
 // Returns an HTML string.
-func (node *CMarkNode) RenderHtml() string {
-	result := C.cmark_render_html(node.node)
+func (node *CMarkNode) RenderHtml(options int) string {
+	result := C.cmark_render_html(node.node, C.long(options))
 	defer C.free(unsafe.Pointer(result))
 	return C.GoString(result)
 }
 
 // Renders the document as a groff man page,
 // without the header
-func (node *CMarkNode) RenderMan() string {
-	result := C.cmark_render_man(node.node)
+func (node *CMarkNode) RenderMan(options int) string {
+	result := C.cmark_render_man(node.node, C.long(options))
 	defer C.free(unsafe.Pointer(result))
 	return C.GoString(result)
 }

@@ -27,17 +27,17 @@ func TestCMarkParser(t *testing.T) {
 	//Call it twice to make sure it doesn't crash :)
 	parser.Free()
 	parser.Free()
-	htmlText := document.RenderHtml()
+	htmlText := document.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	if htmlText != "<h1>Boo</h1>\n" {
 		t.Error("Html text is not as expected :(")
 	}
 	t.Logf("Html Text: %v", htmlText)
-	document.RenderXML()
+	document.RenderXML(commonmark.CMARK_OPT_DEFAULT)
 	document.Free()
 
 	document2 := commonmark.ParseDocument("Foobar\n------")
-	htmlText = document2.RenderHtml()
-	document2.RenderXML()
+	htmlText = document2.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
+	document2.RenderXML(commonmark.CMARK_OPT_DEFAULT)
 	if htmlText != "<h2>Foobar</h2>\n" {
 		t.Error("Html text 2 is not as expected :(")
 	}
@@ -54,7 +54,7 @@ func TestParseFile(t *testing.T) {
 	if node == nil {
 		t.Error(err)
 	}
-	htmlText := node.RenderHtml()
+	htmlText := node.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	if htmlText != "<h1>Test File</h1>\n<h2>Description</h2>\n<p>This is just a test file.</p>\n" {
 		t.Error("Html text is not as expected :(")
 	}
@@ -107,29 +107,29 @@ func TestCMarkNodeOps(t *testing.T) {
 		t.Error("Couldn't prepend header to root")
 	}
 	root.AppendChild(header2)
-	t.Logf("\nXML: %v", root.RenderXML())
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
 
-	htmlStr := root.RenderHtml()
+	htmlStr := root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	if htmlStr != "<h1>I'm the main header!</h1>\n<h2>Another header!</h2>\n" {
 		t.Error("htmlStr is wrong!")
 	}
 	t.Logf("Html Text: %v", htmlStr)
 	//Rearrange...
 	header1.InsertBefore(header2)
-	t.Logf("\nXML: %v", root.RenderXML())
-	htmlStr = root.RenderHtml()
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	htmlStr = root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	if htmlStr != "<h2>Another header!</h2>\n<h1>I'm the main header!</h1>\n" {
 		t.Error("htmlStr is wrong!")
 	}
 	t.Logf("Html Text: %v", htmlStr)
 	//removing something
 	header2.Unlink()
-	t.Logf("\nXML: %v", root.RenderXML())
-	htmlStr = root.RenderHtml()
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	htmlStr = root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	if htmlStr != "<h1>I'm the main header!</h1>\n" {
 		t.Error("htmlStr is wrong!")
 	}
-	manStr := root.RenderMan()
+	manStr := root.RenderMan(commonmark.CMARK_OPT_DEFAULT)
 	t.Logf("\nMAN: %v", manStr)
 	header2.Free()
 	root.Free()
@@ -152,8 +152,8 @@ func TestCMarkLists(t *testing.T) {
 	list.AppendChild(listItem2)
 	list.SetListTight(true)
 	root.AppendChild(list)
-	t.Logf("\nXML: %v", root.RenderXML())
-	htmlString := root.RenderHtml()
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	htmlString := root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	if htmlString != "<ol>\n<li>List Item 1</li>\n<li></li>\n</ol>\n" {
 		t.Error("htmlString is wrong!")
 	}
@@ -177,8 +177,8 @@ func TestCMarkCodeBlocks(t *testing.T) {
 	if root.AppendChild(cb) == false {
 		t.Error("Couldn't append code block to document")
 	}
-	t.Logf("\nXML: %v", root.RenderXML())
-	htmlString := root.RenderHtml()
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	htmlString := root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	t.Logf("\nHtml String: %v\n", htmlString)
 	if htmlString != "<pre><code>int main(){\n return 0;\n }</code></pre>\n" {
 		t.Error("htmlString isn't right!")
@@ -200,8 +200,8 @@ func TestCMarkUrls(t *testing.T) {
 	if link.GetUrl() != "http://duckduckgo.com" {
 		t.Error("Url doesn't match")
 	}
-	t.Logf("\nXML: %v", root.RenderXML())
-	htmlString := root.RenderHtml()
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	htmlString := root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	t.Logf("\nHtml String: %v\n", htmlString)
 	if htmlString != "<p><a href=\"http://duckduckgo.com\"></a></p>\n" {
 		t.Error("htmlString isn't right!")
@@ -226,7 +226,7 @@ func TestCMarkIter(t *testing.T) {
 	list.AppendChild(listItem2)
 	list.SetListTight(true)
 	root.AppendChild(list)
-	t.Logf("\nXML: %v", root.RenderXML())
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
 	iter := commonmark.NewCMarkIter(root)
 	for {
 		ne := iter.Next()
