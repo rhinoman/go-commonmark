@@ -7,7 +7,7 @@ go-commonmark
 Description
 -----------
 
-go-commonmark is a Go wrapper for the CommonMark C library
+go-commonmark is a [Go](http://golang.org) (golang) wrapper for the CommonMark C library
 
 
 Installation
