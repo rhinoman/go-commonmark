@@ -131,7 +131,9 @@ func TestCMarkNodeOps(t *testing.T) {
 	}
 	manStr := root.RenderMan(commonmark.CMARK_OPT_DEFAULT)
 	t.Logf("\nMAN: %v", manStr)
-	header2.Free()
+	root.ConsolidateTextNodes()
+	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	//header2.Free()
 	root.Free()
 }
 

@@ -32,7 +32,7 @@ const (
 	CMARK_NODE_TEXT
 	CMARK_NODE_SOFTBREAK
 	CMARK_NODE_LINEBREAK
-	CMARK_NODE_INLINE_CODE
+	CMARK_NODE_CODE
 	CMARK_NODE_INLINE_HTML
 	CMARK_NODE_EMPH
 	CMARK_NODE_STRONG
@@ -67,6 +67,7 @@ const (
 const CMARK_OPT_DEFAULT = 0
 const CMARK_OPT_SOURCEPOS = 1
 const CMARK_OPT_HARDBREAKS = 2
+const CMARK_OPT_NORMALIZE = 4
 
 //converts C int return codes to True/False :)
 func success(code C.int) bool {
@@ -334,4 +335,9 @@ func (node *CMarkNode) PrependChild(child *CMarkNode) bool {
 //Append a child node
 func (node *CMarkNode) AppendChild(child *CMarkNode) bool {
 	return success(C.cmark_node_append_child(node.node, child.node))
+}
+
+//Consolidates adjacent text nodes.
+func (node *CMarkNode) ConsolidateTextNodes() {
+	C.cmark_consolidate_text_nodes(node.node)
 }
