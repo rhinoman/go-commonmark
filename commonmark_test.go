@@ -242,6 +242,7 @@ func TestCMarkIter(t *testing.T) {
 		}
 
 	}
+	iter.Reset(listItem2, commonmark.CMARK_EVENT_DONE)
 	iter.Free()
 	root.Free()
 }

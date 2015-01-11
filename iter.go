@@ -9,11 +9,11 @@ import (
 	"runtime"
 )
 
-type NodeEvent int
+type CMarkEvent int
 
 const (
-	CMARK_EVENT_DONE NodeEvent = iota
-	CMAR_EVENT_ENTER
+	CMARK_EVENT_DONE CMarkEvent = iota
+	CMARK_EVENT_ENTER
 	CMARK_EVENT_EXIT
 )
 
@@ -32,9 +32,9 @@ func NewCMarkIter(node *CMarkNode) *CMarkIter {
 }
 
 //Returns the event type for the next node
-func (iter *CMarkIter) Next() NodeEvent {
+func (iter *CMarkIter) Next() CMarkEvent {
 	ne := C.cmark_iter_next(iter.iter)
-	return NodeEvent(ne)
+	return CMarkEvent(ne)
 }
 
 //Returns the next node in the sequence
@@ -43,6 +43,13 @@ func (iter *CMarkIter) GetNode() *CMarkNode {
 		node: C.cmark_iter_get_node(iter.iter),
 	}
 
+}
+
+//Reset the iterator so the current node is 'current' and the
+//event type is 'event'.  Use this to resume after
+//desctructively modifying the tree structure
+func (iter *CMarkIter) Reset(current *CMarkNode, event CMarkEvent) {
+	C.cmark_iter_reset(iter.iter, current.node, C.cmark_event_type(event))
 }
 
 //Frees an iterator
