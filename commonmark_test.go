@@ -237,7 +237,7 @@ func TestCMarkIter(t *testing.T) {
 		if iNode == nil {
 			t.Error("iter node was nil!")
 		}
-		if ne == 0 {
+		if ne == commonmark.CMARK_EVENT_DONE {
 			break
 		}
 

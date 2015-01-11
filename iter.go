@@ -12,7 +12,8 @@ import (
 type CMarkEvent int
 
 const (
-	CMARK_EVENT_DONE CMarkEvent = iota
+	CMARK_EVENT_NONE CMarkEvent = iota
+	CMARK_EVENT_DONE
 	CMARK_EVENT_ENTER
 	CMARK_EVENT_EXIT
 )
