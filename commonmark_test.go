@@ -3,6 +3,7 @@ package commonmark_test
 import (
 	"github.com/rhinoman/go-commonmark"
 	"testing"
+	"time"
 )
 
 func TestMd2Html(t *testing.T) {
@@ -245,4 +246,41 @@ func TestCMarkIter(t *testing.T) {
 	iter.Reset(listItem2, commonmark.CMARK_EVENT_DONE)
 	iter.Free()
 	root.Free()
+}
+
+func createTree() *commonmark.CMarkNode {
+	root := commonmark.NewCMarkNode(commonmark.CMARK_NODE_DOCUMENT)
+	header1 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_HEADER)
+	header2 := commonmark.NewCMarkNode(commonmark.CMARK_NODE_HEADER)
+	header1str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
+	header2str := commonmark.NewCMarkNode(commonmark.CMARK_NODE_TEXT)
+	header1str.SetLiteral("Header 1!")
+	header2str.SetLiteral("Header 2!")
+	root.AppendChild(header1)
+	root.AppendChild(header2)
+	header1.AppendChild(header1str)
+	header2.AppendChild(header2str)
+	return root
+
+}
+
+//Checking mem management functions
+func TestMem(t *testing.T) {
+	tree := createTree()
+	time.Sleep(3 * time.Second)
+	t.Logf("\nXML: %v", tree.RenderXML(commonmark.CMARK_OPT_DEFAULT))
+	iter := commonmark.NewCMarkIter(tree)
+	i := 1
+	for {
+		ne := iter.Next()
+		t.Logf("NodeEvent: %v", ne)
+		if ne == commonmark.CMARK_EVENT_DONE {
+			break
+		}
+		i += 1
+	}
+	if i < 9 {
+		t.Errorf("Lost some nodes somewhere: %v", i)
+	}
+	tree.Free()
 }

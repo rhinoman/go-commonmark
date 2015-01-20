@@ -6,7 +6,6 @@ package commonmark
 */
 import "C"
 import (
-	"runtime"
 	"unsafe"
 )
 
@@ -81,7 +80,8 @@ func success(code C.int) bool {
 //Wraps the cmark_node.
 //CommonMark nodes are represented as Trees in memory.
 type CMarkNode struct {
-	node *C.struct_cmark_node
+	node   *C.struct_cmark_node
+	parent *CMarkNode
 }
 
 //Creates a new node of the specified type
@@ -89,7 +89,6 @@ func NewCMarkNode(nt NodeType) *CMarkNode {
 	n := &CMarkNode{
 		node: C.cmark_node_new(C.cmark_node_type(nt)),
 	}
-	runtime.SetFinalizer(n, (*CMarkNode).Free)
 	return n
 }
 
