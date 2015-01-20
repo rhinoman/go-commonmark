@@ -13,7 +13,7 @@ go-commonmark is a [Go](http://golang.org) (golang) wrapper for the CommonMark C
 Installation
 ------------
 
-1.) First, install CommonMark located at: https://github.com/jgm/CommonMark
+1.) First, install CommonMark located at: https://github.com/jgm/CommonMark 
 
 2.) Make sure the directory you install libcmark to is somewhere your system will find it at runtime (i.e., somewhere in your /etc/ld.so.conf: /usr/lib, etc.).  Or you can be lazy and add its location to your LD_LIBRARY_PATH. 
 
@@ -23,9 +23,8 @@ Installation
 go get github.com/rhinoman/go-commonmark
 ```
 
-**Note:**  The C library is still considered 'pre-release' and is under fairly heavy development.  Thus, changes that break this wrapper can happen from time to time, and I'll be playing catch-up when that occurs.  Once a release of the CommonMark C library is made, this wrapper should be pegged to a specific release/tag.
+**Note:**  The C library is still considered 'pre-release' and is under fairly heavy development.  Thus, changes that break this wrapper can happen from time to time, and I'll be playing catch-up when that occurs.  It's probably best to use of one of the tags with it's corresponding version branch/tag of CommonMark (0.16 is the most recent as of this writing).
 
-For now, this wrapper does indeed work with CommonMark master/4a7d305d22 :)
 
 Documentation
 -------------
