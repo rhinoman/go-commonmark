@@ -163,6 +163,18 @@ func (node *CMarkNode) LastChild() *CMarkNode {
 
 //Accessor functions
 
+//Sets arbiturary user data for node
+func (node *CMarkNode) SetNodeUserData(userData interface{}) bool {
+	return success(C.cmark_node_set_user_data(node.node,
+		unsafe.Pointer(&userData)))
+}
+
+//Returns the user data of the node as an
+//unsafe.Pointer.  Hope you know what you're doing.
+func (node *CMarkNode) GetNodeUserData() interface{} {
+	return C.cmark_node_get_user_data(node.node)
+}
+
 //Get the node type
 func (node *CMarkNode) GetNodeType() NodeType {
 	nt := C.cmark_node_get_type(node.node)

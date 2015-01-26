@@ -13,7 +13,7 @@ go-commonmark is a [Go](http://golang.org) (golang) wrapper for the CommonMark C
 Installation
 ------------
 
-1.) First, install CommonMark located at: https://github.com/jgm/CommonMark 
+1.) First, install the CommonMark C library located at: https://github.com/jgm/cmark
 
 2.) Make sure the directory you install libcmark to is somewhere your system will find it at runtime (i.e., somewhere in your /etc/ld.so.conf: /usr/lib, etc.).  Or you can be lazy and add its location to your LD_LIBRARY_PATH. 
 
