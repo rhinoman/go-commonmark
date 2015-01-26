@@ -23,7 +23,7 @@ Installation
 go get github.com/rhinoman/go-commonmark
 ```
 
-**Note:**  The C library is still considered 'pre-release' and is under fairly heavy development.  Thus, changes that break this wrapper can happen from time to time, and I'll be playing catch-up when that occurs.  It's probably best to use of one of the tags with it's corresponding version branch/tag of CommonMark (0.16 is the most recent as of this writing).
+**Note:**  The C library is still considered 'pre-release' and is under fairly heavy development.  Thus, changes that break this wrapper can happen from time to time, and I'll be playing catch-up when that occurs.  It's probably best to use one of the tags with it's corresponding version branch/tag of CommonMark (0.16 is the most recent as of this writing).
 
 
 Documentation
