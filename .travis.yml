@@ -12,7 +12,7 @@ before_install:
  - sudo apt-get install python3
  - sudo apt-get install re2c
  - sudo apt-get install pandoc
- - git clone --branch 0.16 https://github.com/jgm/CommonMark ~/cm
+ - git clone --branch 0.17 https://github.com/jgm/cmark ~/cm
  - cd ~/cm
  - make 
  - sudo make install
