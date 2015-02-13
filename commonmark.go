@@ -2,7 +2,7 @@
 package commonmark
 
 /*
-#cgo LDFLAGS: -lcmark
+#cgo CFLAGS: -std=gnu99
 #include <stdio.h>
 #include <stdlib.h>
 #include "cmark.h"
