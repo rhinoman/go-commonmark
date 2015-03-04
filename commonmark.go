@@ -75,7 +75,7 @@ func (cmp *CMarkParser) Free() {
 }
 
 // Generates a document directly from a string
-func ParseDocument(buffer string) *CMarkNode {
+func ParseDocument(buffer string, options int) *CMarkNode {
 	if !strings.HasSuffix(buffer, "\n") {
 		buffer += "\n"
 	}
@@ -83,7 +83,7 @@ func ParseDocument(buffer string) *CMarkNode {
 	Clen := C.size_t(len(buffer))
 	defer C.free(unsafe.Pointer(Cstr))
 	n := &CMarkNode{
-		node: C.cmark_parse_document(Cstr, Clen),
+		node: C.cmark_parse_document(Cstr, Clen, C.int(options)),
 	}
 	runtime.SetFinalizer(n, (*CMarkNode).Free)
 	return n
@@ -91,7 +91,7 @@ func ParseDocument(buffer string) *CMarkNode {
 
 // Parses a file and returns a CMarkNode
 // Returns an error if the file can't be opened
-func ParseFile(filename string) (*CMarkNode, error) {
+func ParseFile(filename string, options int) (*CMarkNode, error) {
 	fname := C.CString(filename)
 	access := C.CString("r")
 	defer C.free(unsafe.Pointer(fname))
@@ -102,8 +102,13 @@ func ParseFile(filename string) (*CMarkNode, error) {
 	}
 	defer C.fclose(file)
 	n := &CMarkNode{
-		node: C.cmark_parse_file(file),
+		node: C.cmark_parse_file(file, C.int(options)),
 	}
 	runtime.SetFinalizer(n, (*CMarkNode).Free)
 	return n, nil
+}
+
+//Version information
+func CMarkVersion() int {
+	return int(C.cmark_version)
 }

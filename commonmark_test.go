@@ -14,6 +14,11 @@ func TestMd2Html(t *testing.T) {
 	t.Logf("Html Text: %v", htmlText)
 }
 
+func TestCMarkVersion(t *testing.T) {
+	version := commonmark.CMarkVersion()
+	t.Logf("\nVersion: %v", version)
+}
+
 func TestCMarkParser(t *testing.T) {
 	parser := commonmark.NewCmarkParser()
 	if parser == nil {
@@ -36,7 +41,7 @@ func TestCMarkParser(t *testing.T) {
 	document.RenderXML(commonmark.CMARK_OPT_DEFAULT)
 	document.Free()
 
-	document2 := commonmark.ParseDocument("Foobar\n------")
+	document2 := commonmark.ParseDocument("Foobar\n------", 0)
 	htmlText = document2.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
 	document2.RenderXML(commonmark.CMARK_OPT_DEFAULT)
 	if htmlText != "<h2>Foobar</h2>\n" {
@@ -48,7 +53,7 @@ func TestCMarkParser(t *testing.T) {
 }
 
 func TestParseFile(t *testing.T) {
-	node, err := commonmark.ParseFile("test_data/test_file.md")
+	node, err := commonmark.ParseFile("test_data/test_file.md", 0)
 	if err != nil {
 		t.Error(err)
 	}
@@ -62,7 +67,7 @@ func TestParseFile(t *testing.T) {
 	t.Logf("Html Text: %v", htmlText)
 	node.Free()
 	//try to parse a non-existent file
-	eNode, err := commonmark.ParseFile("notafile.md")
+	eNode, err := commonmark.ParseFile("notafile.md", 0)
 	if err == nil {
 		t.Errorf("Should have been an error!")
 	}
