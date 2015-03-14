@@ -39,9 +39,9 @@ type CMarkParser struct {
 // Retruns a new CMark Parser.
 // You must call Free() on this thing when you're done with it!
 // Please.
-func NewCmarkParser() *CMarkParser {
+func NewCmarkParser(options int) *CMarkParser {
 	p := &CMarkParser{
-		parser: C.cmark_parser_new(),
+		parser: C.cmark_parser_new(C.int(options)),
 	}
 	runtime.SetFinalizer(p, (*CMarkParser).Free)
 	return p

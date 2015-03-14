@@ -2,8 +2,8 @@
 #define CMARK_H
 
 #include <stdio.h>
-#include "cmark_export.h"
-#include "cmark_version.h"
+#include <cmark_export.h>
+#include <cmark_version.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -431,7 +431,7 @@ cmark_consolidate_text_nodes(cmark_node *root);
 /** Creates a new parser object.
  */
 CMARK_EXPORT
-cmark_parser *cmark_parser_new();
+cmark_parser *cmark_parser_new(int options);
 
 /** Frees memory allocated for a parser object.
  */

@@ -20,7 +20,7 @@ func TestCMarkVersion(t *testing.T) {
 }
 
 func TestCMarkParser(t *testing.T) {
-	parser := commonmark.NewCmarkParser()
+	parser := commonmark.NewCmarkParser(commonmark.CMARK_OPT_DEFAULT)
 	if parser == nil {
 		t.Error("Parser is nil!")
 	}
