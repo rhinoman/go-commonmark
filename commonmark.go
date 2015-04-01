@@ -18,7 +18,7 @@ import (
 // Converts Markdo--, er, CommonMark text to Html.
 // Parameter mdtext contains CommonMark text.
 // The return value is the HTML string
-func Md2Html(mdtext string) string {
+func Md2Html(mdtext string, options int) string {
 	//The call to cmark will barf if the input string doesn't end with a newline
 	if !strings.HasSuffix(mdtext, "\n") {
 		mdtext += "\n"
@@ -26,7 +26,7 @@ func Md2Html(mdtext string) string {
 	mdCstr := C.CString(mdtext)
 	strLen := C.int(len(mdtext))
 	defer C.free(unsafe.Pointer(mdCstr))
-	htmlString := C.cmark_markdown_to_html(mdCstr, strLen)
+	htmlString := C.cmark_markdown_to_html(mdCstr, strLen, C.int(options))
 	defer C.free(unsafe.Pointer(htmlString))
 	return C.GoString(htmlString)
 }

@@ -116,6 +116,13 @@ func (node *CMarkNode) RenderMan(options int) string {
 	return C.GoString(result)
 }
 
+// Renders node tree as commonmark text.
+func (node *CMarkNode) RenderCMark(options int, width int) string {
+	result := C.cmark_render_commonmark(node.node, C.int(options), C.int(width))
+	defer C.free(unsafe.Pointer(result))
+	return C.GoString(result)
+}
+
 // Cleanup a node, including any children.
 // Unlinks a node from the tree and frees it.
 func (node *CMarkNode) Free() {

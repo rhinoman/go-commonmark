@@ -7,7 +7,7 @@ import (
 )
 
 func TestMd2Html(t *testing.T) {
-	htmlText := commonmark.Md2Html("Boo\n===")
+	htmlText := commonmark.Md2Html("Boo\n===", 0)
 	if htmlText != "<h1>Boo</h1>\n" {
 		t.Errorf("Html text is not as expected :(")
 	}
@@ -137,6 +137,8 @@ func TestCMarkNodeOps(t *testing.T) {
 	}
 	manStr := root.RenderMan(commonmark.CMARK_OPT_DEFAULT)
 	t.Logf("\nMAN: %v", manStr)
+	cmStr := root.RenderCMark(commonmark.CMARK_OPT_DEFAULT, 0)
+	t.Logf("\nCMARK: %v", cmStr)
 	root.ConsolidateTextNodes()
 	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
 	root.SetNodeUserData("STRING!")
