@@ -24,7 +24,7 @@ func Md2Html(mdtext string, options int) string {
 		mdtext += "\n"
 	}
 	mdCstr := C.CString(mdtext)
-	strLen := C.int(len(mdtext))
+	strLen := C.size_t(len(mdtext))
 	defer C.free(unsafe.Pointer(mdCstr))
 	htmlString := C.cmark_markdown_to_html(mdCstr, strLen, C.int(options))
 	defer C.free(unsafe.Pointer(htmlString))
