@@ -10,6 +10,7 @@ before_install:
  - sudo apt-get install python3
  - sudo apt-get install re2c
  - sudo apt-get install pandoc
+ - sudo apt-get install texlive-latex-recommended
  - cd $HOME/gopath/src/github.com/rhinoman/go-commonmark
 script:
  - go test -v ./...
