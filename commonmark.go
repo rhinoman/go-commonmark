@@ -110,5 +110,5 @@ func ParseFile(filename string, options int) (*CMarkNode, error) {
 
 //Version information
 func CMarkVersion() int {
-	return int(C.cmark_version)
+	return int(C.cmark_version())
 }

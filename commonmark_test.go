@@ -135,7 +135,9 @@ func TestCMarkNodeOps(t *testing.T) {
 	if htmlStr != "<h1>I'm the main header!</h1>\n" {
 		t.Error("htmlStr is wrong!")
 	}
-	manStr := root.RenderMan(commonmark.CMARK_OPT_DEFAULT)
+	latexStr := root.RenderLatex(commonmark.CMARK_OPT_DEFAULT, 80)
+	t.Logf("\nLatex: %v", latexStr)
+	manStr := root.RenderMan(commonmark.CMARK_OPT_DEFAULT, 80)
 	t.Logf("\nMAN: %v", manStr)
 	cmStr := root.RenderCMark(commonmark.CMARK_OPT_DEFAULT, 0)
 	t.Logf("\nCMARK: %v", cmStr)

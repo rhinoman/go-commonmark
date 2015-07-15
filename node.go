@@ -68,6 +68,8 @@ const CMARK_OPT_SOURCEPOS = 1
 const CMARK_OPT_HARDBREAKS = 2
 const CMARK_OPT_NORMALIZE = 4
 const CMARK_OPT_SMART = 8
+const CMARK_OPT_VALIDATE_UTF8 = 16
+const CMARK_OPT_SAFE = 32
 
 //converts C int return codes to True/False :)
 func success(code C.int) bool {
@@ -110,8 +112,8 @@ func (node *CMarkNode) RenderHtml(options int) string {
 
 // Renders the document as a groff man page,
 // without the header
-func (node *CMarkNode) RenderMan(options int) string {
-	result := C.cmark_render_man(node.node, C.int(options))
+func (node *CMarkNode) RenderMan(options int, width int) string {
+	result := C.cmark_render_man(node.node, C.int(options), C.int(width))
 	defer C.free(unsafe.Pointer(result))
 	return C.GoString(result)
 }
@@ -119,6 +121,13 @@ func (node *CMarkNode) RenderMan(options int) string {
 // Renders node tree as commonmark text.
 func (node *CMarkNode) RenderCMark(options int, width int) string {
 	result := C.cmark_render_commonmark(node.node, C.int(options), C.int(width))
+	defer C.free(unsafe.Pointer(result))
+	return C.GoString(result)
+}
+
+// Renders node tree as a LaTeX document
+func (node *CMarkNode) RenderLatex(options int, width int) string {
+	result := C.cmark_render_latex(node.node, C.int(options), C.int(width))
 	defer C.free(unsafe.Pointer(result))
 	return C.GoString(result)
 }

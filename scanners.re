@@ -30,9 +30,9 @@ bufsize_t _scan_at(bufsize_t (*scanner)(const unsigned char *), cmark_chunk *c, 
 
   escaped_char = [\\][!"#$%&'()*+,./:;<=>?@[\\\]^_`{|}~-];
 
-  tagname = [A-Za-z][A-Za-z0-9]*;
+  tagname = [A-Za-z][A-Za-z0-9-]*;
 
-  blocktagname = 'article'|'header'|'aside'|'hgroup'|'iframe'|'blockquote'|'hr'|'body'|'li'|'map'|'button'|'object'|'canvas'|'ol'|'caption'|'output'|'col'|'p'|'colgroup'|'pre'|'dd'|'progress'|'div'|'section'|'dl'|'table'|'td'|'dt'|'tbody'|'embed'|'textarea'|'fieldset'|'tfoot'|'figcaption'|'th'|'figure'|'thead'|'footer'|'footer'|'tr'|'form'|'ul'|'h1'|'h2'|'h3'|'h4'|'h5'|'h6'|'video'|'script'|'style';
+  blocktagname = 'address'|'article'|'aside'|'base'|'basefont'|'blockquote'|'body'|'caption'|'center'|'col'|'colgroup'|'dd'|'details'|'dialog'|'dir'|'div'|'dl'|'dt'|'fieldset'|'figcaption'|'figure'|'footer'|'form'|'frame'|'frameset'|'h1'|'head'|'header'|'hr'|'html'|'legend'|'li'|'link'|'main'|'menu'|'menuitem'|'meta'|'nav'|'noframes'|'ol'|'optgroup'|'option'|'p'|'param'|'pre'|'section'|'source'|'title'|'summary'|'table'|'tbody'|'td'|'tfoot'|'th'|'thead'|'title'|'tr'|'track'|'ul';
 
   attributename = [a-zA-Z_:][a-zA-Z0-9:._-]*;
 
@@ -60,7 +60,7 @@ bufsize_t _scan_at(bufsize_t (*scanner)(const unsigned char *), cmark_chunk *c, 
   htmltag = opentag | closetag | htmlcomment | processinginstruction |
             declaration | cdata;
 
-  in_parens_nosp   = [(] (reg_char|escaped_char)* [)];
+  in_parens_nosp   = [(] (reg_char|escaped_char|[\\])* [)];
 
   in_double_quotes = ["] (escaped_char|[^"\x00])* ["];
   in_single_quotes = ['] (escaped_char|[^'\x00])* ['];
@@ -117,16 +117,85 @@ bufsize_t _scan_html_tag(const unsigned char *p)
 */
 }
 
-// Try to match an HTML block tag including first <,
-// returning num of chars matched.
-bufsize_t _scan_html_block_tag(const unsigned char *p)
+// Try to match an HTML block tag start line, returning
+// an integer code for the type of block (1-6, matching the spec).
+// #7 is handled by a separate function, below.
+bufsize_t _scan_html_block_start(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+/*!re2c
+  [<] ('script'|'pre'|'style') (spacechar | [>]) { return 1; }
+  '<!--' { return 2; }
+  '<?' { return 3; }
+  '<!' [A-Z] { return 4; }
+  '<![CDATA[' { return 5; }
+  [<] [/]? blocktagname (spacechar | [/]? [>])  { return 6; }
+  .? { return 0; }
+*/
+}
+
+// Try to match an HTML block tag start line of type 7, returning
+// 7 if successful, 0 if not.
+bufsize_t _scan_html_block_start_7(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+/*!re2c
+  [<] (opentag | closetag) [\t\n\f ]* [\r\n] { return 7; }
+  .? { return 0; }
+*/
+}
+
+// Try to match an HTML block end line of type 1
+bufsize_t _scan_html_block_end_1(const unsigned char *p)
 {
   const unsigned char *marker = NULL;
   const unsigned char *start = p;
 /*!re2c
-  [<] [/] blocktagname (spacechar | [>])  { return (bufsize_t)(p - start); }
-  [<] blocktagname (spacechar | [/>]) { return (bufsize_t)(p - start); }
-  [<] [!?] { return (bufsize_t)(p - start); }
+  .* [<] [/] ('script'|'pre'|'style') [>] { return (bufsize_t)(p - start); }
+  .? { return 0; }
+*/
+}
+
+// Try to match an HTML block end line of type 2
+bufsize_t _scan_html_block_end_2(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+/*!re2c
+  .* '-->' { return (bufsize_t)(p - start); }
+  .? { return 0; }
+*/
+}
+
+// Try to match an HTML block end line of type 3
+bufsize_t _scan_html_block_end_3(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+/*!re2c
+  .* '?>' { return (bufsize_t)(p - start); }
+  .? { return 0; }
+*/
+}
+
+// Try to match an HTML block end line of type 4
+bufsize_t _scan_html_block_end_4(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+/*!re2c
+  .* '>' { return (bufsize_t)(p - start); }
+  .? { return 0; }
+*/
+}
+
+// Try to match an HTML block end line of type 5
+bufsize_t _scan_html_block_end_5(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+/*!re2c
+  .* ']]>' { return (bufsize_t)(p - start); }
   .? { return 0; }
 */
 }
@@ -141,7 +210,7 @@ bufsize_t _scan_link_url(const unsigned char *p)
   const unsigned char *start = p;
 /*!re2c
   [ \r\n]* [<] ([^<>\r\n\\\x00] | escaped_char | [\\])* [>] { return (bufsize_t)(p - start); }
-  [ \r\n]* (reg_char+ | escaped_char | in_parens_nosp)* { return (bufsize_t)(p - start); }
+  [ \r\n]* (reg_char+ | escaped_char | in_parens_nosp | [\\][^()])* { return (bufsize_t)(p - start); }
   .? { return 0; }
 */
 }
@@ -164,6 +233,7 @@ bufsize_t _scan_link_title(const unsigned char *p)
 // Match space characters, including newlines.
 bufsize_t _scan_spacechars(const unsigned char *p)
 {
+  const unsigned char *marker = NULL;
   const unsigned char *start = p; \
 /*!re2c
   [ \t\v\f\r\n]* { return (bufsize_t)(p - start); }
@@ -245,3 +315,17 @@ bufsize_t _scan_entity(const unsigned char *p)
   .? { return 0; }
 */
 }
+
+// Returns positive value if a URL begins in a way that is potentially
+// dangerous, with javascript:, vbscript:, file:, or data:, otherwise 0.
+bufsize_t _scan_dangerous_url(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+/*!re2c
+  'data:image/' ('png'|'gif'|'jpeg'|'webp') { return 0; }
+  'javascript:' | 'vbscript:' | 'file:' | 'data:' { return (bufsize_t)(p - start); }
+  .? { return 0; }
+*/
+}
+
