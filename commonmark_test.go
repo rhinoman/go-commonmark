@@ -197,7 +197,7 @@ func TestCMarkLists(t *testing.T) {
 	root.AppendChild(list)
 	t.Logf("\nXML: %v", root.RenderXML(commonmark.CMARK_OPT_DEFAULT))
 	htmlString := root.RenderHtml(commonmark.CMARK_OPT_DEFAULT)
-	if htmlString != "<ol>\n<li>List Item 1</li>\n<li></li>\n</ol>\n" {
+	if htmlString != "<ol start=\"0\">\n<li>List Item 1</li>\n<li></li>\n</ol>\n" {
 		t.Error("htmlString is wrong!")
 	}
 	t.Logf("\nHtmlString: \n%v", htmlString)
