@@ -37,6 +37,8 @@ static CMARK_INLINE void cmark_chunk_ltrim(cmark_chunk *c) {
 }
 
 static CMARK_INLINE void cmark_chunk_rtrim(cmark_chunk *c) {
+  assert(!c->alloc);
+
   while (c->len > 0) {
     if (!cmark_isspace(c->data[c->len - 1]))
       break;
@@ -50,8 +52,8 @@ static CMARK_INLINE void cmark_chunk_trim(cmark_chunk *c) {
   cmark_chunk_rtrim(c);
 }
 
-static CMARK_INLINE bufsize_t
-    cmark_chunk_strchr(cmark_chunk *ch, int c, bufsize_t offset) {
+static CMARK_INLINE bufsize_t cmark_chunk_strchr(cmark_chunk *ch, int c,
+                                                 bufsize_t offset) {
   const unsigned char *p =
       (unsigned char *)memchr(ch->data + offset, c, ch->len - offset);
   return p ? (bufsize_t)(p - ch->data) : ch->len;
@@ -99,8 +101,8 @@ static CMARK_INLINE cmark_chunk cmark_chunk_literal(const char *data) {
   return c;
 }
 
-static CMARK_INLINE cmark_chunk
-    cmark_chunk_dup(const cmark_chunk *ch, bufsize_t pos, bufsize_t len) {
+static CMARK_INLINE cmark_chunk cmark_chunk_dup(const cmark_chunk *ch,
+                                                bufsize_t pos, bufsize_t len) {
   cmark_chunk c = {ch->data + pos, len, 0};
   return c;
 }

@@ -414,8 +414,8 @@ static bufsize_t parse_list_marker(cmark_mem *mem, cmark_chunk *input,
     data->marker_offset = 0; // will be adjusted later
     data->list_type = CMARK_BULLET_LIST;
     data->bullet_char = c;
-    data->start = 1;
-    data->delimiter = CMARK_PERIOD_DELIM;
+    data->start = 0;
+    data->delimiter = CMARK_NO_DELIM;
     data->tight = false;
   } else if (cmark_isdigit(c)) {
     int start = 0;
@@ -563,21 +563,27 @@ static void S_parser_feed(cmark_parser *parser, const unsigned char *buffer,
         cmark_strbuf_put(&parser->linebuf, buffer, chunk_len);
         // add replacement character
         cmark_strbuf_put(&parser->linebuf, repl, 3);
-        chunk_len += 1; // so we advance the buffer past NULL
       } else {
         cmark_strbuf_put(&parser->linebuf, buffer, chunk_len);
       }
     }
 
     buffer += chunk_len;
-    // skip over line ending characters:
-    if (buffer < end && *buffer == '\r') {
-      buffer++;
-      if (buffer == end)
-        parser->last_buffer_ended_with_cr = true;
+    if (buffer < end) {
+      if (*buffer == '\0') {
+        // skip over NULL
+        buffer++;
+      } else {
+        // skip over line ending characters
+        if (*buffer == '\r') {
+          buffer++;
+          if (buffer == end)
+            parser->last_buffer_ended_with_cr = true;
+        }
+        if (buffer < end && *buffer == '\n')
+          buffer++;
+      }
     }
-    if (buffer < end && *buffer == '\n')
-      buffer++;
   }
 }
 
@@ -933,10 +939,10 @@ static void open_new_blocks(cmark_parser *parser, cmark_node **container,
       *container = add_child(parser, *container, CMARK_NODE_THEMATIC_BREAK,
                              parser->first_nonspace + 1);
       S_advance_offset(parser, input, input->len - 1 - parser->offset, false);
-    } else if ((matched = parse_list_marker(
+    } else if ((!indented || cont_type == CMARK_NODE_LIST) &&
+               (matched = parse_list_marker(
                     parser->mem, input, parser->first_nonspace,
-                    (*container)->type == CMARK_NODE_PARAGRAPH, &data)) &&
-               (!indented || cont_type == CMARK_NODE_LIST)) {
+                    (*container)->type == CMARK_NODE_PARAGRAPH, &data))) {
 
       // Note that we can have new list items starting with >= 4
       // spaces indent, as long as the list container is still open.
@@ -989,7 +995,7 @@ static void open_new_blocks(cmark_parser *parser, cmark_node **container,
                              parser->first_nonspace + 1);
       /* TODO: static */
       memcpy(&((*container)->as.list), data, sizeof(*data));
-      free(data);
+      parser->mem->free(data);
     } else if (indented && !maybe_lazy && !parser->blank) {
       S_advance_offset(parser, input, CODE_INDENT, true);
       *container = add_child(parser, *container, CMARK_NODE_CODE_BLOCK,
@@ -1140,6 +1146,8 @@ static void S_process_line(cmark_parser *parser, const unsigned char *buffer,
   else
     cmark_strbuf_put(&parser->curline, buffer, bytes);
 
+  bytes = parser->curline.size;
+
   // ensure line ends with a newline:
   if (bytes == 0 || !S_is_line_end_char(parser->curline.ptr[bytes - 1]))
     cmark_strbuf_putc(&parser->curline, '\n');
@@ -1151,6 +1159,7 @@ static void S_process_line(cmark_parser *parser, const unsigned char *buffer,
 
   input.data = parser->curline.ptr;
   input.len = parser->curline.size;
+  input.alloc = 0;
 
   parser->line_number++;
 
@@ -1185,9 +1194,7 @@ cmark_node *cmark_parser_finish(cmark_parser *parser) {
 
   finalize_document(parser);
 
-  if (parser->options & CMARK_OPT_NORMALIZE) {
-    cmark_consolidate_text_nodes(parser->root);
-  }
+  cmark_consolidate_text_nodes(parser->root);
 
   cmark_strbuf_free(&parser->curline);
 
