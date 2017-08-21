@@ -345,8 +345,7 @@ static int scan_delims(subject *subj, unsigned char c, bool *can_open,
     *can_close = right_flanking &&
                  (!left_flanking || cmark_utf8proc_is_punctuation(after_char));
   } else if (c == '\'' || c == '"') {
-    *can_open = left_flanking && !right_flanking &&
-	         before_char != ']' && before_char != ')';
+    *can_open = left_flanking && !right_flanking;
     *can_close = right_flanking;
   } else {
     *can_open = left_flanking;
@@ -616,7 +615,7 @@ static delimiter *S_insert_emph(subject *subj, delimiter *opener,
   cmark_node *tmp, *tmpnext, *emph;
 
   // calculate the actual number of characters used from this closer
-  use_delims = (closer_num_chars >= 2 && opener_num_chars >= 2) ? 2 : 1;
+  use_delims = (closer_num_chars >= 2 && opener_num_chars >=2) ? 2 : 1;
 
   // remove used characters from associated inlines.
   opener_num_chars -= use_delims;
@@ -822,8 +821,7 @@ noMatch:
   return 0;
 }
 
-static bufsize_t manual_scan_link_url_2(cmark_chunk *input, bufsize_t offset,
-                                        cmark_chunk *output) {
+static bufsize_t manual_scan_link_url_2(cmark_chunk *input, bufsize_t offset, cmark_chunk *output) {
   bufsize_t i = offset;
   size_t nb_p = 0;
 
@@ -856,8 +854,7 @@ static bufsize_t manual_scan_link_url_2(cmark_chunk *input, bufsize_t offset,
   return i - offset;
 }
 
-static bufsize_t manual_scan_link_url(cmark_chunk *input, bufsize_t offset,
-                                      cmark_chunk *output) {
+static bufsize_t manual_scan_link_url(cmark_chunk *input, bufsize_t offset, cmark_chunk *output) {
   bufsize_t i = offset;
 
   if (i < input->len && input->data[i] == '<') {
@@ -927,8 +924,7 @@ static cmark_node *handle_close_bracket(subject *subj) {
   // First, look for an inline link.
   if (peek_char(subj) == '(' &&
       ((sps = scan_spacechars(&subj->input, subj->pos + 1)) > -1) &&
-      ((n = manual_scan_link_url(&subj->input, subj->pos + 1 + sps,
-                                 &url_chunk)) > -1)) {
+      ((n = manual_scan_link_url(&subj->input, subj->pos + 1 + sps, &url_chunk)) > -1)) {
 
     // try to parse an explicit link:
     endurl = subj->pos + 1 + sps + n;
